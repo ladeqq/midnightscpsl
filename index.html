@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIDNIGHT • SCP:SL</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #000;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding: 36px 18px 60px;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.16;
+      animation: drift 22s infinite alternate ease-in-out;
+    }
+
+    .blob-1 { top: 5%; left: 15%; background: #dc2626; }
+    .blob-2 { bottom: 15%; right: 20%; background: #8b5cf6; animation-delay: -7s; animation-duration: 25s; }
+    .blob-3 { top: 45%; right: 10%; background: #0284c7; opacity: 0.12; animation-delay: -12s; }
+
+    @keyframes drift {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(50px, -40px, 0) scale(1.08); }
+      100% { transform: translate3d(-40px, 40px, 0) scale(0.95); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Шапка */
+    .profile-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin-bottom: 14px;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.35);
+      position: relative;
+      z-index: 1;
+    }
+
+    .avatar-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.6), rgba(139, 92, 246, 0.4));
+      filter: blur(12px);
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff 40%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(220, 38, 38, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      color: #fca5a5;
+    }
+
+    /* Кнопки тарифов FunPay */
+    .btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 60px;
+      padding: 0 18px;
+      border-radius: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.025);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.25s ease,
+                  border-color 0.25s ease,
+                  box-shadow 0.25s ease;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.09), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .btn:hover::before { opacity: 1; }
+    .btn:active { transform: scale(0.985); }
+
+    .btn-name {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-price {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 9px;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-7d:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: rgba(2, 132, 199, 0.08);
+      box-shadow: 0 8px 30px -6px rgba(14, 165, 233, 0.35);
+    }
+    .btn-7d .btn-price {
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-30d:hover {
+      border-color: rgba(168, 85, 247, 0.45);
+      background: rgba(168, 85, 247, 0.08);
+      box-shadow: 0 8px 30px -6px rgba(168, 85, 247, 0.35);
+    }
+    .btn-30d .btn-price {
+      background: rgba(168, 85, 247, 0.15);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-life:hover {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.09);
+      box-shadow: 0 8px 30px -6px rgba(239, 68, 68, 0.4);
+    }
+    .btn-life .btn-price {
+      background: rgba(239, 68, 68, 0.18);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-box:hover {
+      border-color: rgba(234, 179, 8, 0.45);
+      background: rgba(234, 179, 8, 0.08);
+      box-shadow: 0 8px 30px -6px rgba(234, 179, 8, 0.35);
+    }
+    .btn-box .btn-price {
+      background: rgba(234, 179, 8, 0.15);
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-cfg:hover {
+      border-color: rgba(148, 163, 184, 0.45);
+      background: rgba(148, 163, 184, 0.08);
+      box-shadow: 0 8px 30px -6px rgba(148, 163, 184, 0.3);
+    }
+    .btn-cfg .btn-price {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Заголовки секций */
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 8px 0 2px;
+      padding-left: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      display: inline-block;
+    }
+
+    /* YouTube Видео Карта */
+    .yt-card {
+      position: relative;
+      width: 100%;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.025);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.25s ease,
+                  box-shadow 0.25s ease;
+    }
+
+    .yt-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 10px 30px -6px rgba(239, 68, 68, 0.35);
+    }
+
+    .yt-preview {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #09090b;
+      overflow: hidden;
+    }
+
+    .yt-thumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .yt-card:hover .yt-thumb {
+      transform: scale(1.04);
+      filter: brightness(0.9);
+    }
+
+    .yt-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 58px;
+      height: 40px;
+      border-radius: 12px;
+      background: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.6);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .yt-card:hover .yt-play {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: #ef4444;
+    }
+
+    .yt-play svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+      margin-left: 2px;
+    }
+
+    .yt-meta {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 15, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .yt-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+
+    .yt-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Настоящий пост Telegram */
+    .tg-bubble-card {
+      position: relative;
+      width: 100%;
+      border-radius: 18px;
+      background: rgba(14, 22, 33, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.25s ease,
+                  box-shadow 0.25s ease;
+    }
+
+    .tg-bubble-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 10px 30px -6px rgba(14, 165, 233, 0.35);
+    }
+
+    .tg-bubble-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tg-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tg-author-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tg-author-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tg-author-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tg-author-sub {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .tg-send-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #38bdf8;
+      opacity: 0.8;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .tg-bubble-card:hover .tg-send-icon svg {
+      opacity: 1;
+      transform: translate(2px, -2px);
+    }
+
+    .tg-bubble-content {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tg-block-title {
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .tg-cmd {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .tg-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+    }
+
+    .tg-bubble-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .tg-react-list {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tg-react-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .tg-info-views {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    /* Соцсети внизу */
+    .socials-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .circle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.025);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.25s ease,
+                  border-color 0.25s ease,
+                  box-shadow 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .circle-btn svg { width: 20px; height: 20px; transition: transform 0.2s ease; }
+    .circle-btn:active { transform: scale(0.92); }
+
+    .circle-tg svg { fill: #38bdf8; }
+    .circle-tg:hover {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(56, 189, 248, 0.1);
+      box-shadow: 0 8px 25px -4px rgba(56, 189, 248, 0.4);
+    }
+    .circle-tg:hover svg { transform: scale(1.1); fill: #7dd3fc; }
+
+    .circle-ds svg { fill: #8b5cf6; }
+    .circle-ds:hover {
+      border-color: rgba(139, 92, 246, 0.5);
+      background: rgba(124, 58, 237, 0.12);
+      box-shadow: 0 8px 25px -4px rgba(124, 58, 237, 0.4);
+    }
+    .circle-ds:hover svg { transform: scale(1.1); fill: #a78bfa; }
+
+    .circle-yt svg { fill: #ef4444; }
+    .circle-yt:hover {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.1);
+      box-shadow: 0 8px 25px -4px rgba(239, 68, 68, 0.4);
+    }
+    .circle-yt:hover svg { transform: scale(1.1); fill: #f87171; }
+  </style>
+</head>
+<body>
+
+  <div class="ambient">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="container">
+    <!-- Шапка -->
+    <div class="profile-card">
+      <div class="avatar-wrap">
+        <img class="avatar-img" src="https://sun9-49.vkuserphoto.ru/impg/SfaW0d5NBeYTzYHwBQu2G_DdTH4tBmVelCuxLQ/g8Z79jEO5jg.jpg?size=800x800&quality=96&sign=4f01ba8ad9ad335cc1f08d79f997270b&type=album" alt="MIDNIGHT">
+      </div>
+      <h1 class="title">MIDNIGHT</h1>
+      <span class="badge">SCP: SECRET LABORATORY</span>
+    </div>
+
+    <!-- Кнопки тарифов FunPay -->
+    <a class="btn btn-7d" href="https://funpay.com/lots/offer?id=31248363" target="_blank" rel="noopener">
+      <span class="btn-name">midnight 7d</span>
+      <span class="btn-price">225 ₽</span>
+    </a>
+
+    <a class="btn btn-30d" href="https://funpay.com/lots/offer?id=35073724" target="_blank" rel="noopener">
+      <span class="btn-name">midnight 30d</span>
+      <span class="btn-price">450 ₽</span>
+    </a>
+
+    <a class="btn btn-life" href="https://funpay.com/lots/offer?id=31248200" target="_blank" rel="noopener">
+      <span class="btn-name">midnight lifetime</span>
+      <span class="btn-price">20 000 ₽</span>
+    </a>
+
+    <a class="btn btn-box" href="https://funpay.com/lots/offer?id=31248213" target="_blank" rel="noopener">
+      <span class="btn-name">monsterbox</span>
+      <span class="btn-price">50 ₽</span>
+    </a>
+
+    <a class="btn btn-cfg" href="https://funpay.com/users/7520123/" target="_blank" rel="noopener">
+      <span class="btn-name">конфиги</span>
+      <span class="btn-price">funpay</span>
+    </a>
+
+    <!-- YouTube Превью -->
+    <div class="section-title"><span class="live-dot"></span> ПОСЛЕДНЕЕ ВИДЕО</div>
+    <a class="yt-card" href="https://youtu.be/qujWijjrflY" target="_blank" rel="noopener">
+      <div class="yt-preview">
+        <img class="yt-thumb" src="https://i.ytimg.com/vi/qujWijjrflY/maxresdefault.jpg" alt="Обзор MIDNIGHT">
+        <div class="yt-play">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <div class="yt-meta">
+        <span class="yt-title">MIDNIGHT • Актуальный геймплей и функции</span>
+        <span class="yt-tag">СМОТРЕТЬ</span>
+      </div>
+    </a>
+
+    <!-- Реальный Telegram Пост со скриншота -->
+    <div class="section-title"><span class="live-dot"></span> ПОСЛЕДНИЙ ПОСТ В TELEGRAM</div>
+    <a class="tg-bubble-card" href="https://t.me/MidnightSCP/769" target="_blank" rel="noopener">
+      <div class="tg-bubble-head">
+        <div class="tg-author">
+          <img class="tg-author-avatar" src="https://sun9-49.vkuserphoto.ru/impg/SfaW0d5NBeYTzYHwBQu2G_DdTH4tBmVelCuxLQ/g8Z79jEO5jg.jpg?size=800x800&quality=96&sign=4f01ba8ad9ad335cc1f08d79f997270b&type=album" alt="MIDNIGHT SCP:SL">
+          <div class="tg-author-meta">
+            <span class="tg-author-name">☀️ MIDNIGHT SCP:SL</span>
+            <span class="tg-author-sub">13 сентября • @MidnightSCP</span>
+          </div>
+        </div>
+        <div class="tg-send-icon">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </div>
+      </div>
+
+      <div class="tg-bubble-content">
+        <div>
+          <div class="tg-block-title">🇷🇺 Обновление коробки удачи</div>
+          <div style="margin-top: 4px;">
+            В коробку удачи ( <span class="tg-cmd">/monsterbox</span> ) добавлен гарантированный бонус:
+          </div>
+          <div class="tg-line" style="margin-top: 4px;">+ 1 токен для сброса привязки ( <span class="tg-cmd">/rhwid</span> )</div>
+          <div class="tg-line">+ 1 🧊 для заморозки времени подписки</div>
+        </div>
+
+        <div>
+          <div class="tg-block-title">🇺🇸 Lucky Box Update</div>
+          <div style="margin-top: 4px;">
+            Added to the Lucky Box ( <span class="tg-cmd">/monsterbox</span> ) bonus items:
+          </div>
+          <div class="tg-line" style="margin-top: 4px;">+ 1 HWID reset token ( <span class="tg-cmd">/rhwid</span> )</div>
+          <div class="tg-line">+ 1 🧊 for freezing subscription time</div>
+        </div>
+      </div>
+
+      <div class="tg-bubble-footer">
+        <div class="tg-react-list">
+          <span class="tg-react-pill">⭐ 1</span>
+          <span class="tg-react-pill">👌 8</span>
+          <span class="tg-react-pill">💔 6</span>
+          <span class="tg-react-pill">❤️ 3</span>
+        </div>
+        <span class="tg-info-views">2.8K 👁</span>
+      </div>
+    </a>
+
+    <!-- Соцсети внизу -->
+    <div class="socials-row">
+      <a class="circle-btn circle-tg" href="https://t.me/MidnightSCP" target="_blank" rel="noopener" aria-label="Новости TG" title="Новости">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+      </a>
+
+      <a class="circle-btn circle-tg" href="https://t.me/midnightscp_bot" target="_blank" rel="noopener" aria-label="TG Бот" title="Telegram Bot">
+        <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg>
+      </a>
+
+      <a class="circle-btn circle-ds" href="https://discord.com/invite/xp6J8w9pPp" target="_blank" rel="noopener" aria-label="Discord" title="Discord">
+        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+      </a>
+
+      <a class="circle-btn circle-yt" href="https://www.youtube.com/@MIDNIGHT_SCP" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        btn.style.setProperty('--x', `${e.clientX - r.left}px`);
+        btn.style.setProperty('--y', `${e.clientY - r.top}px`);
+      });
+    });
+  </script>
+</body>
+</html>
